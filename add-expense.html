@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Add Expense</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div class="container">
+    <h2>Add Expense</h2>
+
+    <form id="expenseForm">
+      <label for="name">Expense Name</label>
+      <input type="text" id="name" required />
+
+      <label for="amount">Amount</label>
+      <input type="number" id="amount" required />
+
+      <label for="date">Date</label>
+      <input type="text" id="date" placeholder="YYYY-MM-DD" required />
+
+      <label for="description">Description</label>
+      <textarea id="description" rows="4" required></textarea>
+
+      <button type="submit" class="green-button">Add Expense</button>
+      <button class="back-button" onclick="goBack()">Back to Dashboard</button>
+    </form>
+
+  </div>
+
+  <script>
+    const token = localStorage.getItem("token");
+    if (!token) {
+      alert("Please login first.");
+      window.location.href = "index.html";
+    }
+
+    document.getElementById("expenseForm").addEventListener("submit", function (e) {
+      e.preventDefault();
+      const username = localStorage.getItem("username");
+
+      const expense = {
+        expenseName: document.getElementById("name").value,
+        amount: parseFloat(document.getElementById("amount").value),
+        date: document.getElementById("date").value,
+        description: document.getElementById("description").value,
+        user: {
+        username: username
+      }
+      };
+
+      fetch("http://localhost:8080/Expenses/addExpense", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": "Bearer " + token
+        },
+        body: JSON.stringify(expense)
+      })
+      .then(response => {
+        if (!response.ok) {
+          return response.text().then(text => { throw new Error(text); });
+        }
+        return response.json();
+      })
+      .then(data => {
+        alert("Expense added successfully!");
+        window.location.href = "dashboard.html";
+      })
+      .catch(error => {
+        alert("Failed to add expense: " + error.message);
+      });
+    });
+     function goBack() {
+    window.location.href = "dashboard.html";
+  }
+  </script>
+</body>
+</html>

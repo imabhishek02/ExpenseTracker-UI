@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Expense List</title>
+  <link rel="stylesheet" href="expense-list.css" />
+
+  <style>
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 20px;
+    }
+    th, td {
+      padding: 10px;
+      border: 1px solid #ccc;
+    }
+    th {
+      background-color: #f0f0f0;
+    }
+  </style>
+</head>
+<body>
+  <div class="container"> <div class="back-button-container">
+    <button class="back-button" onclick="goBack()">← Back to Dashboard</button>
+  </div>
+    <h2>Your Expenses</h2>
+    <table id="expenseTable">
+      <thead>
+        <tr>
+          <th>Expense Name</th>
+          <th>Amount</th>
+          <th>Date</th>
+          <th>Description</th>
+        </tr>
+      </thead>
+      <tbody id="expenseBody">
+      </tbody>
+    </table>
+  </div>
+
+  <script>
+    const token = localStorage.getItem("token");
+    const userId = localStorage.getItem("userId");
+
+    if (!token || !userId) {
+      alert("Please login first.");
+      window.location.href = "index.html";
+    }
+
+    fetch(`http://localhost:8080/Expenses/getAllExpenses/${userId}`, {
+      method: "GET",
+      headers: {
+        "Authorization": "Bearer " + token
+      }
+    })
+    .then(response => {
+      if (!response.ok) {
+        throw new Error("Failed to fetch expenses");
+      }
+      return response.json();
+    })
+    .then(expenses => {
+      const tbody = document.getElementById("expenseBody");
+      if (expenses.length === 0) {
+        tbody.innerHTML = "<tr><td colspan='4'>No expenses found</td></tr>";
+      } else {
+        expenses.forEach(exp => {
+          const row = document.createElement("tr");
+          row.innerHTML = `
+            <td>${exp.expenseName}</td>
+            <td>${exp.amount}</td>
+            <td>${exp.date}</td>
+            <td>${exp.description}</td>
+          `;
+          tbody.appendChild(row);
+        });
+      }
+    })
+    .catch(error => {
+      alert("Error: " + error.message);
+    });
+    function goBack() {
+    window.location.href = "dashboard.html";
+  }
+  </script>
+</body>
+</html>

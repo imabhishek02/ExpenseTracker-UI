@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Register - Expense Tracker</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div class="container">
+    <h2>Register</h2>
+
+    <!-- Form with ID -->
+    <form id="registerForm">
+      <label for="username">Username</label>
+      <input type="text" id="username" required />
+
+      <label for="password">Password</label>
+      <input type="password" id="password" required />
+
+      <label for="email">Email</label>
+      <input type="email" id="email" required />
+
+      <label for="fullname">Full Name</label>
+      <input type="text" id="fullname" required />
+
+      <button type="submit" class="green-button">Register</button>
+    </form>
+  </div>
+
+  <!-- JavaScript at bottom so DOM loads first -->
+  <script>
+    document.getElementById("registerForm").addEventListener("submit", function (e) {
+      e.preventDefault();
+
+      const userData = {
+        username: document.getElementById("username").value,
+        password: document.getElementById("password").value,
+        email: document.getElementById("email").value,
+        name: document.getElementById("fullname").value
+      };
+
+      console.log("Sending user data:", userData);
+
+      fetch("http://localhost:8080/expenseTracker/signup", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify(userData)
+      })
+      .then(response => {
+        console.log("Response status:", response.status);
+        if (!response.ok) {
+          return response.text().then(text => { throw new Error(text); });
+        }
+        return response.json();
+      })
+      .then(data => {
+        console.log("Signup successful:", data);
+        window.location.href = "index.html?success=true";
+      })
+      .catch(error => {
+        console.error("Error during registration:", error);
+        alert("Invalid username or password: " + error.message);
+      });
+    });
+  </script>
+</body>
+</html>

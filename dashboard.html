@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Dashboard - Expense Tracker</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div class="container" style="text-align: center;">
+    <h2>Welcome to Expense Tracker</h2>
+
+    <div class="dashboard-buttons">
+  <button class="green-button" onclick="goToAddExpense()">Add Expense</button>
+  <button class="green-button" onclick="goToExpenseList()">Expense List</button>
+  <button class="logout-button" onclick="logout()">Logout</button>
+</div>
+  </div>
+  
+
+
+  <script>
+    // Check if token is available
+    const token = localStorage.getItem("token");
+    if (!token) {
+      alert("Please login first.");
+      window.location.href = "index.html";
+    }
+
+    function goToAddExpense() {
+      window.location.href = "add-expense.html";
+    }
+
+    function goToExpenseList() {
+      window.location.href = "expense-list.html";
+    }
+    function goBack() {
+    window.location.href = "dashboard.html";
+  }
+
+  function logout() {
+    localStorage.clear();
+    window.location.href = "index.html";
+  }
+  </script>
+</body>
+</html>
